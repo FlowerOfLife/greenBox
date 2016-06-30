@@ -1,0 +1,153 @@
+<html>
+<style>
+
+</style>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/datagrid.js"></script>
+    <script type="text/javascript" src="easyui/extentions/datagrid-filter.js"></script>
+    <script type="text/javascript" src="js/timeagojquery.js"></script>
+</head>
+
+
+
+
+
+<table id="plansActions" title="Plans" toolbar="#toolbar" idField="id" rownumbers="true" fitColumns="true" singleSelect="true" sortable="true">
+    <thead>
+        <tr>
+            <th field="id" editor="text">id</th>
+            <th field="actionName" editor="{
+              type:'combobox',
+              options: {
+                data: [
+                      {'value': 'checkPh', text: 'checkPh'},
+                      {'value': 'checkEc', text: 'checkEc'},
+                      {'value': 'checkTemp', text: 'checkTemp'},
+                      {'value': 'stablisePh', text: 'stablisePh'}
+
+                ]
+                }}">actionName</th>
+            <th field="actionParams" editor="text">actionParams</th>
+            <th field="lastRun" editor="text">lastRun</th>
+            <th field="RunEvery" editor="{
+              type:'combobox',
+              options: {
+                data: [
+                      {'value': '1min', text: '1min'},
+                      {'value': '5min', text: '5min'},
+                      {'value': '10min', text: '10min'},
+                      {'value': '15min', text: '15min'},
+                      {'value': '60min', text: '60min'},
+                      {'value': '0:00', text: '0:00'},
+                      {'value': '2:00', text: '2:00'},
+                      {'value': '3:00', text: '3:00'},
+                      {'value': '4:00', text: '4:00'},
+                      {'value': '5:00', text: '5:00'},
+                      {'value': '6:00', text: '6:00'},
+                      {'value': '7:00', text: '7:00'},
+                      {'value': '8:00', text: '8:00'},
+                      {'value': '9:00', text: '9:00'},
+                      {'value': '10:00', text: '10:00'},
+                      {'value': '11:00', text: '11:00'},
+                      {'value': '12:00', text: '12:00'},
+
+                ]
+                }}">RunEvery</th>
+            <th field="NextRun" editor="text">NextRun</th>
+    </thead>
+</table>
+
+
+
+<table id="plansActionsLog" title="actionsLog" toolbar="#toolbar" idField="id" rownumbers="true" fitColumns="true" singleSelect="true" sortable="true">
+    <thead>
+        <tr>
+            <th field="dateTime" editor="text">dateTime</th>
+            <th field="action" editor="text">action</th>
+            <th field="message" editor="text">message</th>
+    </thead>
+</table>
+
+<script language='javascript'>
+    $('#plansActions').edatagrid({
+        url: '/api/getPlan',
+        updateUrl: '/api/getPlan',
+        //nowrap: true,
+        //autoRowHeight: true,
+        //autoRowHeight: false,
+        //destroyUrl: 'deleteMon.php',
+        //fitColumns: true,
+        //autoSizeColumn: true,
+        rowStyler: function(index, row) {
+
+            try {
+
+              console.log(row.lastRun)
+                row.lastRun = $.timeago(new Date(row.lastRun*1000))
+
+            } catch (e) {
+
+
+                console.log(e)
+            }
+
+        },
+        onClickCell: function(rowIndex, field, value) {
+            // console.log(rowIndex,field,value,111)
+        },
+        onAfterEdit: function() {
+            // $('#schedule').datagrid('reload');
+        }
+    });
+
+    $('#plansActionsLog').datagrid({
+        url: '/api/getLogData',
+        updateUrl: '/api/getLogData',
+        //nowrap: true,
+        //autoRowHeight: true,
+        //autoRowHeight: false,
+        //destroyUrl: 'deleteMon.php',
+        //fitColumns: true,
+        //autoSizeColumn: true,
+        rowStyler: function(index, row) {
+  console.log(row,111111,new Date(row.dateTime),row.dateTime)
+            try {
+                row.dateTime = $.timeago(new Date(row.dateTime*1000))
+
+                //    console.log(row)
+            } catch (e) {
+
+
+                console.log(e)
+            }
+
+        },
+        onClickCell: function(rowIndex, field, value) {
+            // console.log(rowIndex,field,value,111)
+        },
+        onAfterEdit: function() {
+            // $('#schedule').datagrid('reload');
+        }
+    });
+
+
+
+    setInterval(function() {
+        $('#plansActionsLog').datagrid('reload')
+    }, 10000)
+
+    setInterval(function() {
+        $('#plansActions').datagrid('reload')
+    }, 30000)
+
+    window.onload = function() {
+
+    }
+</script>
+
+</html>
